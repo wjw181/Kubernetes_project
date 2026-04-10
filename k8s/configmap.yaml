@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fastapi-demo-config
+data:
+  APP_NAME: "Student API"
+  ENV: "k8s-local"

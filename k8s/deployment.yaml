@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-demo
+  template:
+    metadata:
+      labels:
+        app: fastapi-demo
+    spec:
+      containers:
+        - name: fastapi-demo
+          image: fastapi-demo:v3
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+
+          envFrom:
+            - configMapRef:
+                name: fastapi-demo-config
+            - secretRef:
+                name: fastapi-demo-secret
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "100m"
+              memory: "128Mi"
